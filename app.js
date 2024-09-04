@@ -147,7 +147,6 @@ const countries = [
     "perou",
     "philippines",
     "pologne",
-    "porto rico",
     "qatar",
     "republique centrafricaine",
     "republique democratique du congo",
