@@ -204,12 +204,15 @@ let currentCountryIndex = 0;
 let score = 0;
 const maxQuestions = 20; 
 
+let isTransitioning = false; // Variable pour suivre l'état de la transition
+
+
 // Sélection des éléments du DOM
-const quizzImg = document.getElementById("quizz-img");
-const quizzQuestion = document.getElementById("quizz-question");
-const inputResultat = document.getElementById("resultat");
-const nextButton = document.getElementById("next");
-const resultatFinal = document.getElementById("resultatFinal");
+const quizzImg = document.querySelector('#quizz-img');
+const quizzQuestion = document.querySelector('#quizz-question');
+const inputResultat = document.querySelector('#resultat');
+const nextButton = document.querySelector('#next');
+const resultatFinal = document.querySelector('#resultatFinal');
 
 // algorithme de Fisher-Yates
 function shuffleArray(array) {
@@ -236,13 +239,25 @@ function loadNewCountry() {
         quizzQuestion.textContent = "Quel est ce pays ?";
         inputResultat.value = ""; // Réinitialiser le champ de saisie
         resultatFinal.textContent = ""; // Vider l'éventuel message de résultat précédent
+        quizzImg.style.display = "block"; // S'assurer que l'image est visible
+        nextButton.textContent = "Suivant"; // Remettre le texte à "Suivant"
     } else {
         quizzQuestion.textContent = "Quizz terminé !";
-        quizzImg.style.display = "none";
+        quizzImg.style.display = "none"; // Cacher l'image
         resultatFinal.textContent = `Votre score final est : ${score} / ${shuffledCountries.length}`;
-        nextButton.style.display = "none";
+        nextButton.textContent = "Rejouer"; // Changer le texte en "Rejouer"
     }
 }
+
+// Modifier la fonction du bouton "Suivant/Rejouer"
+nextButton.addEventListener("click", function() {
+    if (currentCountryIndex < shuffledCountries.length) {
+        checkAnswer(); // Si le quiz n'est pas terminé, vérifier la réponse
+    } else {
+        startQuiz(); // Si le quiz est terminé, relancer le quiz
+    }
+});
+
 
 // Fonction pour vérifier si la touche "Enter" a été pressée
 inputResultat.addEventListener("keypress", function(event) {
@@ -269,7 +284,7 @@ function checkAnswer() {
     }
 
     // Afficher le score actuel
-    resultatFinal.textContent += ` | Score : ${score} / ${shuffledCountries.length}`;
+    resultatFinal.textContent += ` | Score : ${score} / ${currentCountryIndex + 1}`;
 
     // Passer au pays suivant après un court délai
     setTimeout(() => {
@@ -278,8 +293,6 @@ function checkAnswer() {
     }, 2000);
 }
 
-// Ajouter un événement au bouton "Suivant"
 nextButton.addEventListener("click", checkAnswer);
 
-// Démarrer le quizz au chargement de la page
 startQuiz();
