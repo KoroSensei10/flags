@@ -1,4 +1,3 @@
-// Tableau des noms de pays (pour lesquels les drapeaux sont dans le dossier sous la forme nomdupays.png)
 const countries = [
     "france", 
     "allemagne", 
@@ -200,11 +199,10 @@ const countries = [
     "zimbabwe"
 ];
 
-// Variables pour suivre l'état du quizz
 let shuffledCountries = [];
 let currentCountryIndex = 0;
 let score = 0;
-const maxQuestions = 20;  // Limite à 20 questions
+const maxQuestions = 20; 
 
 // Sélection des éléments du DOM
 const quizzImg = document.getElementById("quizz-img");
@@ -213,37 +211,36 @@ const inputResultat = document.getElementById("resultat");
 const nextButton = document.getElementById("next");
 const resultatFinal = document.getElementById("resultatFinal");
 
-// Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+// algorithme de Fisher-Yates
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];  // Échange des éléments
+        [array[i], array[j]] = [array[j], array[i]]; 
     }
 }
 
-// Fonction pour initialiser le quizz
 function startQuiz() {
     shuffledCountries = [...countries];  // Copier le tableau des pays
-    shuffleArray(shuffledCountries);  // Mélanger les pays
-    shuffledCountries = shuffledCountries.slice(0, maxQuestions);  // Limiter à 20 pays
+    shuffleArray(shuffledCountries);
+    shuffledCountries = shuffledCountries.slice(0, maxQuestions);
     currentCountryIndex = 0;
     score = 0;
     loadNewCountry();
 }
 
-// Fonction pour afficher une nouvelle question
+
 function loadNewCountry() {
     if (currentCountryIndex < shuffledCountries.length) {
         const country = shuffledCountries[currentCountryIndex];
-        quizzImg.src = `flag/${country}.png`; // Assurez-vous que les images sont dans un dossier 'flag'
+        quizzImg.src = `flag/${country}.png`; 
         quizzQuestion.textContent = "Quel est ce pays ?";
         inputResultat.value = ""; // Réinitialiser le champ de saisie
         resultatFinal.textContent = ""; // Vider l'éventuel message de résultat précédent
     } else {
         quizzQuestion.textContent = "Quizz terminé !";
-        quizzImg.style.display = "none"; // Cacher l'image une fois le quizz terminé
+        quizzImg.style.display = "none";
         resultatFinal.textContent = `Votre score final est : ${score} / ${shuffledCountries.length}`;
-        nextButton.style.display = "none"; // Cacher le bouton suivant
+        nextButton.style.display = "none";
     }
 }
 
@@ -255,10 +252,14 @@ inputResultat.addEventListener("keypress", function(event) {
     }
 });
 
-// Fonction pour vérifier la réponse et passer à la question suivante
+function normalizeString(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+
 function checkAnswer() {
-    const userAnswer = inputResultat.value.trim().toLowerCase();
-    const correctAnswer = shuffledCountries[currentCountryIndex].toLowerCase();
+    const userAnswer = normalizeString(inputResultat.value);
+    const correctAnswer = normalizeString(shuffledCountries[currentCountryIndex]);
     
     if (userAnswer === correctAnswer) {
         score++;
@@ -266,7 +267,10 @@ function checkAnswer() {
     } else {
         resultatFinal.textContent = `Mauvaise réponse ! C'était : ${shuffledCountries[currentCountryIndex]}`;
     }
-    
+
+    // Afficher le score actuel
+    resultatFinal.textContent += ` | Score : ${score} / ${shuffledCountries.length}`;
+
     // Passer au pays suivant après un court délai
     setTimeout(() => {
         currentCountryIndex++;
