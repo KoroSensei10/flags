@@ -191,7 +191,7 @@ const countries = [
     "tuvalu",
     "ukraine",
     "uruguay",
-    "vanatu",
+    "vanuatu",
     "venezuela",
     "vietnam",
     "yemen",
